@@ -41,12 +41,14 @@ router.post('/', upload.single('Pavatar'), async (req, res) => {
             PEmail: req.body.PEmail,
             PNumber: parseInt(req.body.PNumber), // Convert to number
             Pavatar: req.file ? req.file.filename : null, // Store the filename of the uploaded avatar
+            PAge: req.body.PAge,
             PHeight: req.body.PHeight,
-            PWeight: req.body.PWeight,
+            PWeight: req.body.PWeight,  
             PField: req.body.PField,
             PJursey: req.body.PJursey,
             DeviceType: req.body.DeviceType,
-            SerialNumber: req.body.SerialNumber
+            SerialNumber: req.body.SerialNumber,
+            
         };
 
         const result = await playersCollection.insertOne(newPlayer); // Use playersCollection instead of coachesCollection
