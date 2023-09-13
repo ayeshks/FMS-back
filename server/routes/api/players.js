@@ -61,10 +61,10 @@ router.post('/', upload.single('Pavatar'), async (req, res) => {
 });
 
 async function loadPlayersCollection() {
-    const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster1.68uy6q1.mongodb.net/?retryWrites=true&w=majority', {
+    const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
       useNewUrlParser: true,
     });
-    return client.db('perfai').collection('Players');
+    return client.db('perfai-new').collection('Players');
   }
   
   module.exports = router;

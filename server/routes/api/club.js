@@ -58,17 +58,17 @@ router.post('/', async (req, res) => {
 
 
 async function loadClubDataCollection() {
-  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster1.68uy6q1.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai').collection('club');
+  return client.db('perfai-new').collection('club');
 }
 
 async function loadClubOwnersCollection() {
-  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster1.68uy6q1.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai').collection('clubowner');
+  return client.db('perfai-new').collection('clubowner');
 }
 
 module.exports = router;

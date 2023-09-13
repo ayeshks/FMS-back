@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 // const serverless = require ('serverless-http')
+// const AWS = require("aws-sdk")
+// const KEY_ID = "AKIAYBYPZNYKFUNXOON5"
+// const SECRET_KEY = "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"
 
 const app = express();
 
@@ -35,6 +38,7 @@ app.use('/api/players',playersRoutes)
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
+
 // module.exports.handler = serverless(app);
 
 
