@@ -1,8 +1,14 @@
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
+const upload = require('../../../middleware/upload');
 
 const router = express.Router();
+
+router.get('/uploads/:filename', (req, res) => {
+  const filename = req.params.filename;
+  res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
+});
 
 // Get all clubs
 router.get('/', async (req, res) => {
@@ -18,9 +24,9 @@ router.get('/', async (req, res) => {
   
   let clubIdCounter = 0;
 // Create a new club and link it to a club owner
-router.post('/', async (req, res) => {
+router.post('/',upload.single('clubavatar'), async (req, res) => {
   try {
-    const { clubName, location, description, clubOwnerId } = req.body;
+    const { clubName, country, description, clubOwnerId } = req.body;
     const clubDataCollection = await loadClubDataCollection();
     const clubOwnersCollection = await loadClubOwnersCollection();
 
@@ -35,11 +41,13 @@ router.post('/', async (req, res) => {
     if (!clubOwner) {
       return res.status(400).json({ success: false, message: 'Invalid club owner ID' });
     }
+    
 
     const newClub = {
       clubId: String(++clubIdCounter),
       clubName,
-      location,
+      clubavatar: req.file ? req.file.filename : null, 
+      country,
       description,
       clubOwnerId,
       createdAt: new Date(),

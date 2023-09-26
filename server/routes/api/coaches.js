@@ -2,6 +2,7 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 const upload = require('../../../middleware/upload'); // Import the upload middleware
+// const fs = require('fs');
 
 const router = express.Router();
 
@@ -24,23 +25,28 @@ router.get('/', async (req, res) => {
   });
 
 //Add Coach
-let currentCoachId = 10; // Initialize with the starting coachId value
+let currentCoachId = 10;
 
 router.post('/', upload.single('avatar'), async (req, res) => {
     try {
         const coachesCollection = await loadCoachesCollection();
 
-        // Increment the coachId counter
-        currentCoachId += 1;
+        // Fetch the current count of coaches from the database
+        const coachCount = await coachesCollection.countDocuments();
 
-        // Create the new coach object
+        // Increment the currentCoachId based on the count
+        currentCoachId = coachCount > 0 ? coachCount + 10 : 10;
+
+        // Create the new coach object with the incremented coach ID
         const newCoach = {
             coachId: currentCoachId,
             coachFname: req.body.coachFname,
             coachLname: req.body.coachLname,
             coachEmail: req.body.coachEmail,
             coachPhone: parseInt(req.body.coachPhone), // Convert to number
-            avatar: req.file ? req.file.filename : null // Store the filename of the uploaded avatar
+            avatar: req.file ? req.file.filename : null, // Store the filename of the uploaded avatar
+            createdAt: new Date(),
+            updatedAt: new Date(),
         };
 
         const result = await coachesCollection.insertOne(newCoach);
@@ -51,6 +57,7 @@ router.post('/', upload.single('avatar'), async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 async function loadCoachesCollection() {
     const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
       useNewUrlParser: true,

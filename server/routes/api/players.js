@@ -31,7 +31,10 @@ router.post('/', upload.single('Pavatar'), async (req, res) => {
         const playersCollection = await loadPlayersCollection(); // Make sure this function is correctly implemented
 
         // Increment the playerId counter
-        currentPlayerId += 1;
+        const playerCount = await playersCollection.countDocuments();
+
+        // Increment the currentCoachId based on the count
+        currentPlayerId = playerCount > 0 ? playerCount + 10 : 10;
 
         // Create the new player object
         const newPlayer = {
@@ -48,6 +51,8 @@ router.post('/', upload.single('Pavatar'), async (req, res) => {
             PJursey: req.body.PJursey,
             DeviceType: req.body.DeviceType,
             SerialNumber: req.body.SerialNumber,
+            createdAt: new Date(),
+            updatedAt: new Date(),
             
         };
 
