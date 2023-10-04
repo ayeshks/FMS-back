@@ -21,6 +21,8 @@ const coachesRoutes = require('./routes/api/coaches');
 const playersRoutes = require('./routes/api/players');
 const teamsRoutes = require('./routes/api/teams');
 const teamsdataRoutes = require('./routes/api/teamsdata');
+const sessionRoutes = require('./routes/api/session');
+
 
 // const currentModulePath = path.dirname(__filename);
 
@@ -36,6 +38,8 @@ app.use('/api/coaches',coachesRoutes)
 app.use('/api/players',playersRoutes)
 app.use('/api/teams',teamsRoutes)
 app.use('/api/teamsdata',teamsdataRoutes)
+app.use('/api/session',sessionRoutes)
+
 
 
 
