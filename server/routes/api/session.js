@@ -18,14 +18,12 @@ router.get('/', async (req, res) => {
     }
   });
 
-  router.post('/', upload.single('Savatar'), async (req, res) => {
+  router.post('/', upload.single('Map'), async (req, res) => {
     try {
       const { sessionName, Stype, tags, playerId } = req.body;
       const sessionCollection = await loadSessionCollection();
   
-      // You can add additional validation here to ensure coachId and playerId are valid
-  
-      // Calculate the next team ID based on the existing teams
+   
       const sessionCount = await sessionCollection.countDocuments();
       const currentSessionId = sessionCount > 0 ? sessionCount + 1 : 1;
   
@@ -36,9 +34,9 @@ router.get('/', async (req, res) => {
         sessionId: String(currentSessionId),
         sessionName,
         Stype,
-        Savatar: req.file ? req.file.filename : null,
+        Map: req.file ? req.file.filename : null,
         tags,
-        playerId: playerIds, // Store the player IDs as an array
+        playerId: playerIds, 
         createdAt: new Date(),
         updatedAt: new Date(),
       };
