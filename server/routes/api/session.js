@@ -18,9 +18,9 @@ router.get('/', async (req, res) => {
     }
   });
 
-  router.post('/', upload.single('Map'), async (req, res) => {
+  router.post('/', upload.single('sessionAvatar'), async (req, res) => {
     try {
-      const { sessionName, Stype, tags, playerId } = req.body;
+      const { sessionName, Stype, tags,mapId,playerId} = req.body;
       const sessionCollection = await loadSessionCollection();
   
    
@@ -34,9 +34,10 @@ router.get('/', async (req, res) => {
         sessionId: String(currentSessionId),
         sessionName,
         Stype,
-        Map: req.file ? req.file.filename : null,
+        mapId,
         tags,
         playerId: playerIds, 
+        sessionAvatar: req.file ? req.file.filename : null,
         createdAt: new Date(),
         updatedAt: new Date(),
       };

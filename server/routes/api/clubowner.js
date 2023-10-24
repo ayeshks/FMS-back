@@ -44,9 +44,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-
-
-
 async function loadClubOwnerCollection() {
   const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,

@@ -22,6 +22,8 @@ const playersRoutes = require('./routes/api/players');
 const teamsRoutes = require('./routes/api/teams');
 const teamsdataRoutes = require('./routes/api/teamsdata');
 const sessionRoutes = require('./routes/api/session');
+const sessiondataRoutes = require('./routes/api/sessiondata');
+const mapRoutes = require('./routes/api/map');
 
 
 // const currentModulePath = path.dirname(__filename);
@@ -39,6 +41,8 @@ app.use('/api/players',playersRoutes)
 app.use('/api/teams',teamsRoutes)
 app.use('/api/teamsdata',teamsdataRoutes)
 app.use('/api/session',sessionRoutes)
+app.use('/api/sessiondata',sessiondataRoutes)
+app.use('/api/map',mapRoutes)
 
 
 
