@@ -1,30 +1,30 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
-const upload = require('../../../middleware/upload'); // Import the upload middleware
-// const fs = require('fs');
+const upload = require('../../../middleware/upload');
+const path = require('path'); // Import the path module for file operations
 
 const router = express.Router();
 
 router.get('/uploads/:filename', (req, res) => {
-  const filename = req.params.filename;
-  res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
+    const filename = req.params.filename;
+    res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
 });
 
-// Get coache
+// Get coaches
 router.get('/', async (req, res) => {
     try {
-      const coachesCollection = await loadCoachesCollection();
-      const coachesData = await coachesCollection.find({}).toArray();
-  
-      res.send(coachesData);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+        const coachesCollection = await loadCoachesCollection();
+        const coachesData = await coachesCollection.find({}).toArray();
 
-//Add Coach
+        res.send(coachesData);
+    } catch (error) {
+        console.error('GET /coaches Error:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Add Coach
 let currentCoachId = 10;
 
 router.post('/', upload.single('avatar'), async (req, res) => {
@@ -53,16 +53,62 @@ router.post('/', upload.single('avatar'), async (req, res) => {
 
         res.status(201).send({ message: 'Coach added successfully', coachId: currentCoachId });
     } catch (error) {
-        console.error(error);
+        console.error('POST /coaches Error:', error);
         res.status(500).send('Internal Server Error');
     }
 });
 
+
+// Update a coach
+router.put('/:objectId', upload.single('avatar'), async (req, res) => {
+    try {
+        const coachIdToUpdate = req.params.objectId;
+
+        const coachesCollection = await loadCoachesCollection();
+
+        // Check if the coach exists
+        const existingCoach = await coachesCollection.findOne({ _id: new ObjectId(coachIdToUpdate) });
+
+        if (!existingCoach) {
+            res.status(404).json({ success: false, message: 'Coach not found' });
+            return;
+        }
+
+        // Update the coach data
+        const updatedCoach = {
+            coachFname: req.body.coachFname || existingCoach.coachFname,
+            coachLname: req.body.coachLname || existingCoach.coachLname,
+            coachEmail: req.body.coachEmail || existingCoach.coachEmail,
+            coachPhone: req.body.coachPhone || existingCoach.coachPhone,
+        };
+
+        console.log('Updated Coach:', updatedCoach);
+
+        // Perform the update
+        const result = await coachesCollection.updateOne(
+            { _id: new ObjectId(coachIdToUpdate) },
+            { $set: updatedCoach }
+        );
+
+        console.log('Update Result:', result);
+
+        if (result.modifiedCount === 0) {
+            res.status(404).json({ success: false, message: 'Coach not found' });
+            return;
+        }
+
+        res.json({ success: true, message: 'Coach updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+});
+
 async function loadCoachesCollection() {
-    const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
-      useNewUrlParser: true,
-    });
-    return client.db('perfai-new').collection('coaches');
-  }
-  
-  module.exports = router;
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+  });
+  return client.db('perfai-new').collection('coaches');
+}
+
+module.exports = router;

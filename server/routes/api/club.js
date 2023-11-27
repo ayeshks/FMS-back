@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 const upload = require('../../../middleware/upload');
 
@@ -61,6 +61,66 @@ router.post('/',upload.single('clubavatar'), async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to create club' });
   }
 });
+
+// Update a club by ObjectId
+router.put('/:objectId', upload.single('clubavatar'), async (req, res) => {
+  try {
+    const objectId = req.params.objectId;
+    console.log('Updating club with objectId:', objectId);
+
+    const { clubName, country, description } = req.body;
+
+    if (!clubName && !country && !description && !req.file) {
+      console.log('No update data provided');
+      return res.status(400).json({ success: false, message: 'No update data provided' });
+    }
+
+    const clubDataCollection = await loadClubDataCollection();
+
+    // Find the existing club
+    const existingClub = await clubDataCollection.findOne({ _id: new ObjectId(objectId) });
+
+    if (!existingClub) {
+      console.log('Club not found for objectId:', objectId);
+      return res.status(404).json({ success: false, message: 'Club not found' });
+    }
+
+    // Create the updatedClub object by spreading existingClub and updating specified properties
+    const updatedClub = {
+      ...existingClub,
+      clubName: clubName || existingClub.clubName,
+      country: country || existingClub.country,
+      description: description || existingClub.description,
+      clubavatar: req.file ? req.file.filename : existingClub.clubavatar,
+      updatedAt: new Date(),
+    };
+
+    // Perform the update in the database
+    const result = await clubDataCollection.updateOne(
+      { _id: new ObjectId(objectId) },
+      { $set: updatedClub }
+    );
+
+    if (result.matchedCount === 0) {
+      console.log('Club not found for objectId:', objectId);
+      return res.status(404).json({ success: false, message: 'Club not found' });
+    }
+
+    console.log('Club updated successfully for objectId:', objectId);
+    res.json({ success: true, message: 'Club updated successfully' });
+  } catch (error) {
+    console.error('Error during club update:', error);
+    res.status(500).json({ success: false, message: 'Failed to update club', error: error.message });
+  }
+});
+
+// Function to load the MongoDB collection
+async function loadClubDataCollection() {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+  });
+  return client.db('perfai-new').collection('club');
+}
 
 
 

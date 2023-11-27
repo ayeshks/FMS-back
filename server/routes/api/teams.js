@@ -55,6 +55,61 @@ router.post('/', upload.single('Tavatar'), async (req, res) => {
 });
 
 
+// Update the teams
+router.put('/:objectId', upload.single('Tavatar'), async (req, res) => {
+    try {
+        const objectIdToUpdate = req.params.objectId;
+        console.log('objectIdToUpdate:', objectIdToUpdate);
+
+        const { teamName, grade, description, coachId, playerId } = req.body;
+
+        const teams = await loadTeamsCollection();
+
+        // Convert the objectId string to ObjectId
+        const teamObjectId = new ObjectId(objectIdToUpdate);
+
+        // Check if the team exists using MongoDB ObjectId
+        const existingTeam = await teams.findOne({ _id: teamObjectId });
+
+        // console.log('Existing Team:', existingTeam);
+
+        if (!existingTeam) {
+            // console.log('Team not found in the database.');
+            res.status(404).json({ success: false, message: 'Team not found' });
+            return;
+        }
+
+        // Update the team data
+        const updatedTeam = {
+            teamName: teamName || existingTeam.teamName,
+            grade: grade || existingTeam.grade,
+            description: description || existingTeam.description,
+            coachId: coachId || existingTeam.coachId,
+            playerId: playerId || existingTeam.playerId,
+            Tavatar: req.file ? req.file.filename : existingTeam.Tavatar,
+            updatedAt: new Date(),
+        };
+
+        // Perform the update
+        const result = await teams.updateOne(
+            { _id: teamObjectId },
+            { $set: updatedTeam }
+        );
+
+        if (result.modifiedCount === 0) {
+            console.log('Team not found during update.');
+            res.status(404).json({ success: false, message: 'Team not found' });
+            return;
+        }
+
+        console.log('Team updated successfully.');
+        res.json({ success: true, message: 'Team updated successfully' });
+    } catch (error) {
+        console.error('Error during PUT:', error);
+        console.error(error.stack);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+});
   
   
   async function loadTeamsCollection() {

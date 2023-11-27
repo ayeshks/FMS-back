@@ -2,10 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-// const serverless = require ('serverless-http')
-// const AWS = require("aws-sdk")
-// const KEY_ID = "AKIAYBYPZNYKFUNXOON5"
-// const SECRET_KEY = "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"
 
 const app = express();
 
@@ -13,6 +9,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+// Importing routes
 const userRoutes = require('./routes/api/user');
 const clubOwnerRoutes = require('./routes/api/clubowner');
 const clubRoutes = require('./routes/api/club');
@@ -25,34 +22,22 @@ const sessionRoutes = require('./routes/api/session');
 const sessiondataRoutes = require('./routes/api/sessiondata');
 const mapRoutes = require('./routes/api/map');
 
-
-// const currentModulePath = path.dirname(__filename);
-
 // Serve static files from the "uploads" directory
-// app.use('/uploads', express.static(path.join(currentModulePath, 'uploads')));
 app.use('/uploads', express.static('uploads'));
 
+// Routes
 app.use('/api/user', userRoutes);
 app.use('/api/clubowner', clubOwnerRoutes);
 app.use('/api/club', clubRoutes);
 app.use('/api/clubdata', clubdataRoutes);
-app.use('/api/coaches',coachesRoutes)
-app.use('/api/players',playersRoutes)
-app.use('/api/teams',teamsRoutes)
-app.use('/api/teamsdata',teamsdataRoutes)
-app.use('/api/session',sessionRoutes)
-app.use('/api/sessiondata',sessiondataRoutes)
-app.use('/api/map',mapRoutes)
-
-
-
-
+app.use('/api/coaches', coachesRoutes);
+app.use('/api/players', playersRoutes);
+app.use('/api/teams', teamsRoutes);
+app.use('/api/teamsdata', teamsdataRoutes);
+app.use('/api/session', sessionRoutes);
+app.use('/api/sessiondata', sessiondataRoutes);
+app.use('/api/map', mapRoutes);
 
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
-
-// module.exports.handler = serverless(app);
-
-
-
