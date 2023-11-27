@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 
 
@@ -15,7 +15,9 @@ router.get('/', async (req, res) => {
       console.error(error);
       res.status(500).json({ success: false, message: 'Failed to get club owners' });
     }
-  });
+});
+  
+
 
 // Create a new club owner
 router.post('/', async (req, res) => {
@@ -44,11 +46,60 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Update a club owner
+router.put('/:ObjectId', async (req, res) => {
+    try {
+        const clubOwnerIdToUpdate = req.params.ObjectId;
+        // console.log('Club Owner ID to update:', clubOwnerIdToUpdate);
+
+        const clubownersCollection = await loadClubOwnerCollection();
+
+        // Check if the club owner exists
+        const existingClubOwner = await clubownersCollection.findOne({ _id: new ObjectId(clubOwnerIdToUpdate) });
+
+        if (!existingClubOwner) {
+            res.status(404).json({ success: false, message: 'Club Owner not found' });
+            return;
+        }
+
+        // Update the club owner data
+        const updatedClubOwner = {
+            OfirstName: req.body.OfirstName || existingClubOwner.OfirstName,
+            OlastName: req.body.OlastName || existingClubOwner.OlastName,
+            email: req.body.email || existingClubOwner.email,
+            phoneNumber: req.body.phoneNumber || existingClubOwner.phoneNumber,
+            updatedAt: new Date(),
+        };
+
+        console.log('Updated Club Owner:', updatedClubOwner);
+
+        // Perform the update
+        const result = await clubownersCollection.updateOne(
+            { _id: new ObjectId(clubOwnerIdToUpdate) },
+            { $set: updatedClubOwner }
+        );
+
+        console.log('Update Result:', result);
+
+        if (result.modifiedCount === 0) {
+            res.status(404).json({ success: false, message: 'Club Owner not found' });
+            return;
+        }
+
+        res.json({ success: true, message: 'Club Owner updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+});
+
+
 async function loadClubOwnerCollection() {
   const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster10.jhyuynm.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
   return client.db('perfai-new').collection('clubowner');
 }
+
 
 module.exports = router;
