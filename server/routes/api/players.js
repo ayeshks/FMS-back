@@ -1,13 +1,16 @@
 const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
+// Import the upload middleware
 const upload = require('../../../middleware/upload');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
 
+
 router.get('/uploads/:filename', (req, res) => {
   const filename = req.params.filename;
-  res.sendFile(path.join(__dirname, 'uploads', filename));
+  res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
 });
 
 // router.get('/:ObjectId', async (req, res) => {
@@ -156,8 +159,6 @@ router.put('/:ObjectId', upload.single('Pavatar'), async (req, res) => {
             SerialNumber: req.body.SerialNumber || existingPlayer.SerialNumber,
             updatedAt: new Date(),
         };
-
-        console.log('Updated Player:', updatedPlayer);
 
         const result = await playersCollection.updateOne(
             { _id: new ObjectId(objectIdToUpdate) },

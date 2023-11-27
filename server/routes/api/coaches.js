@@ -53,7 +53,7 @@ router.post('/', upload.single('avatar'), async (req, res) => {
 
         res.status(201).send({ message: 'Coach added successfully', coachId: currentCoachId });
     } catch (error) {
-        console.error('POST /coaches Error:', error);
+        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });

@@ -3,6 +3,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 
+// const serverless = require ('serverless-http')
+// const AWS = require("aws-sdk")
+// const KEY_ID = "AKIAYBYPZNYKFUNXOON5"
+// const SECRET_KEY = "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"
+
 const app = express();
 
 // Middleware
@@ -21,7 +26,10 @@ const teamsdataRoutes = require('./routes/api/teamsdata');
 const sessionRoutes = require('./routes/api/session');
 const sessiondataRoutes = require('./routes/api/sessiondata');
 const mapRoutes = require('./routes/api/map');
+// const currentModulePath = path.dirname(__filename);
 
+// Serve static files from the "uploads" directory
+// app.use('/uploads', express.static(path.join(currentModulePath, 'uploads')));
 // Serve static files from the "uploads" directory
 app.use('/uploads', express.static('uploads'));
 
@@ -41,3 +49,5 @@ app.use('/api/map', mapRoutes);
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
+
+// module.exports.handler = serverless(app);
