@@ -13,23 +13,23 @@ router.get('/uploads/:filename', (req, res) => {
   res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
 });
 
-// router.get('/:ObjectId', async (req, res) => {
-//     try {
-//         const objectIdParam = req.params.ObjectId;
-//         const playersCollection = await loadPlayersCollection();
-//         const playerData = await playersCollection.findOne({ _id: new ObjectId(objectIdParam) });
+router.get('/:ObjectId', async (req, res) => {
+    try {
+        const objectIdParam = req.params.ObjectId;
+        const playersCollection = await loadPlayersCollection();
+        const playerData = await playersCollection.findOne({ _id: new ObjectId(objectIdParam) });
 
-//         if (!playerData) {
-//             res.status(404).json({ message: 'Player not found' });
-//             return;
-//         }
+        if (!playerData) {
+            res.status(404).json({ message: 'Player not found' });
+            return;
+        }
 
-//         res.json(playerData);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ message: 'Internal Server Error' });
-//     }
-// });
+        res.json(playerData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
 
 
 router.get('/', async (req, res) => {
@@ -77,7 +77,7 @@ router.post('/', upload.single('Pavatar'), async (req, res) => {
   }
 });
 
-// Update Player
+// //Update Player
 // router.put('/:playerId', upload.single('Pavatar'), async (req, res) => {
 //     try {
 //         const playerIdToUpdate = req.params.playerId;
