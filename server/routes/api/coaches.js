@@ -11,6 +11,26 @@ router.get('/uploads/:filename', (req, res) => {
     res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
 });
 
+router.get('/:ObjectId', async (req, res) => {
+  try {
+    const objectIdParam = req.params.ObjectId;
+    const coachesCollection = await loadCoachesCollection(); // Replace with your function to load the coaches collection
+    const coachData = await coachesCollection.findOne({ _id: new ObjectId(objectIdParam) });
+
+    if (!coachData) {
+      res.status(404).json({ message: 'Coach not found' });
+      return;
+    }
+
+    res.json(coachData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+
 // Get coaches
 router.get('/', async (req, res) => {
     try {
@@ -80,6 +100,7 @@ router.put('/:objectId', upload.single('avatar'), async (req, res) => {
             coachLname: req.body.coachLname || existingCoach.coachLname,
             coachEmail: req.body.coachEmail || existingCoach.coachEmail,
             coachPhone: req.body.coachPhone || existingCoach.coachPhone,
+            avatar: req.file ? req.file.filename : existingCoach.avatar,
         };
 
         console.log('Updated Coach:', updatedCoach);
