@@ -24,9 +24,10 @@ router.get('/', async (req, res) => {
   
   let clubIdCounter = 0;
 // Create a new club and link it to a club owner
-router.post('/',upload.single('clubavatar'), async (req, res) => {
+router.post('/', upload.single('clubavatar'), async (req, res) => {
   try {
     const { clubName, country, description, clubOwnerId } = req.body;
+
     const clubDataCollection = await loadClubDataCollection();
     const clubOwnersCollection = await loadClubOwnersCollection();
 
@@ -37,16 +38,15 @@ router.post('/',upload.single('clubavatar'), async (req, res) => {
     }
 
     const clubOwner = await clubOwnersCollection.findOne({ clubOwnerId });
-
+    
     if (!clubOwner) {
       return res.status(400).json({ success: false, message: 'Invalid club owner ID' });
     }
-    
 
     const newClub = {
       clubId: String(++clubIdCounter),
       clubName,
-      clubavatar: req.file ? req.file.filename : null, 
+      clubavatar: req.file ? req.file.filename : null,
       country,
       description,
       clubOwnerId,
@@ -55,9 +55,11 @@ router.post('/',upload.single('clubavatar'), async (req, res) => {
     };
 
     await clubDataCollection.insertOne(newClub);
-    res.status(201).json({ success: true, clubId: newClub.clubOwnerId, message:'Club created successfully'});
+
+    res.status(201).json({ success: true, clubId: newClub.clubOwnerId, message: 'Club created successfully' });
   } catch (error) {
-    console.error(error);
+    console.error('Error creating club:', error);
+
     res.status(500).json({ success: false, message: 'Failed to create club' });
   }
 });
@@ -77,7 +79,6 @@ router.put('/:objectId', upload.single('clubavatar'), async (req, res) => {
 
     const clubDataCollection = await loadClubDataCollection();
 
-    // Find the existing club
     const existingClub = await clubDataCollection.findOne({ _id: new ObjectId(objectId) });
 
     if (!existingClub) {
@@ -85,7 +86,6 @@ router.put('/:objectId', upload.single('clubavatar'), async (req, res) => {
       return res.status(404).json({ success: false, message: 'Club not found' });
     }
 
-    // Create the updatedClub object by spreading existingClub and updating specified properties
     const updatedClub = {
       ...existingClub,
       clubName: clubName || existingClub.clubName,
@@ -95,7 +95,6 @@ router.put('/:objectId', upload.single('clubavatar'), async (req, res) => {
       updatedAt: new Date(),
     };
 
-    // Perform the update in the database
     const result = await clubDataCollection.updateOne(
       { _id: new ObjectId(objectId) },
       { $set: updatedClub }

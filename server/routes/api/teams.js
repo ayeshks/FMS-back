@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 const { ObjectId } = require('mongodb'); 
 const upload = require('../../../middleware/upload');
-const multer = require('multer'); // If you need to handle file uploads
+const multer = require('multer');
 
 const router = express.Router();
 
@@ -18,14 +18,12 @@ router.get('/', async (req, res) => {
     }
   });
 
-// let currentTeamId = 0;
 
 router.post('/', upload.single('Tavatar'), async (req, res) => {
   try {
     const { teamName, grade, description, coachId, playerId } = req.body;
     const teamsCollection = await loadTeamsCollection();
 
-    // You can add additional validation here to ensure coachId and playerId are valid
 
     // Calculate the next team ID based on the existing teams
     const teamCount = await teamsCollection.countDocuments();
@@ -41,7 +39,7 @@ router.post('/', upload.single('Tavatar'), async (req, res) => {
       Tavatar: req.file ? req.file.filename : null,
       description,
       coachId,
-      playerId: playerIds, // Store the player IDs as an array
+      playerId: playerIds, 
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -71,7 +69,6 @@ router.put('/:objectId', upload.single('Tavatar'), async (req, res) => {
         // Check if the team exists using MongoDB ObjectId
         const existingTeam = await teams.findOne({ _id: teamObjectId });
 
-        // console.log('Existing Team:', existingTeam);
 
         if (!existingTeam) {
             // console.log('Team not found in the database.');
@@ -88,7 +85,14 @@ router.put('/:objectId', upload.single('Tavatar'), async (req, res) => {
             playerId: playerId || existingTeam.playerId,
             Tavatar: req.file ? req.file.filename : existingTeam.Tavatar,
             updatedAt: new Date(),
-        };
+      };
+      
+      // Ensure playerId is always an array with a single element
+      updatedTeam.playerId = playerId
+        ? Array.isArray(playerId)  
+          ? playerId              
+          : [playerId]            
+        : existingTeam.playerId || []; 
 
         // Perform the update
         const result = await teams.updateOne(
