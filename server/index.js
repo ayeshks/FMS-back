@@ -26,6 +26,8 @@ const teamsdataRoutes = require('./routes/api/teamsdata');
 const sessionRoutes = require('./routes/api/session');
 const sessiondataRoutes = require('./routes/api/sessiondata');
 const mapRoutes = require('./routes/api/map');
+const iotRoutes = require('./routes/api/iot');
+const performanceRoutes = require('./routes/api/performance');
 // const currentModulePath = path.dirname(__filename);
 
 // Serve static files from the "uploads" directory
@@ -45,9 +47,11 @@ app.use('/api/teamsdata', teamsdataRoutes);
 app.use('/api/session', sessionRoutes);
 app.use('/api/sessiondata', sessiondataRoutes);
 app.use('/api/map', mapRoutes);
+app.use('/api/iot', iotRoutes);
+app.use('/api/performance', performanceRoutes);
+
 
 const port = process.env.PORT || 5000;
-
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
 // module.exports.handler = serverless(app);
