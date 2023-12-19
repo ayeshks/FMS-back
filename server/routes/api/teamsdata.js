@@ -30,9 +30,7 @@ router.get('/', async (req, res) => {
     const teamsWithData = await teamsCollection.aggregate([
       {
         $addFields: {
-          // Convert coachId to ObjectId
           coachId: { $toObjectId: '$coachId' },
-          // Convert playerId array to an array of ObjectId
           playerId: {
             $map: {
               input: '$playerId',
@@ -44,7 +42,7 @@ router.get('/', async (req, res) => {
       },
       {
         $lookup: {
-          from: 'coaches', // Replace with the actual name of your coaches collection
+          from: 'coaches', 
           localField: 'coachId',
           foreignField: '_id',
           as: 'coach',
@@ -52,7 +50,7 @@ router.get('/', async (req, res) => {
       },
       {
         $lookup: {
-          from: 'Players', // Replace with the actual name of your players collection
+          from: 'Players', 
           localField: 'playerId',
           foreignField: '_id',
           as: 'Players',
@@ -66,6 +64,62 @@ router.get('/', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to get teams data' });
   }
 });
+
+router.get('/:ObjectId', async (req, res) => {
+  try {
+    const objectIdParam = req.params.ObjectId;
+    const teamsCollection = await loadTeamsCollection();
+
+    const teamWithData = await teamsCollection.aggregate([
+      {
+        $match: { _id: new ObjectId(objectIdParam) }
+      },
+      {
+        $addFields: {
+          coachId: { $toObjectId: '$coachId' },
+          playerId: {
+            $map: {
+              input: '$playerId',
+              as: 'playerId',
+              in: { $toObjectId: '$$playerId' },
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'coaches',
+          localField: 'coachId',
+          foreignField: '_id',
+          as: 'coach',
+        },
+      },
+      {
+          $lookup: {
+            from: 'Players',
+            localField: 'playerId',
+            foreignField: '_id',
+            as: 'Players',
+          },
+        },
+    ]).toArray();
+
+    if (teamWithData.length === 0) {
+      console.log(`Team with ID ${objectIdParam} not found`);
+      res.status(404).json({ message: 'Team not found' });
+      return;
+    }
+
+    const teamData = teamWithData[0];
+
+    console.log('Team with Data:', teamData);
+    res.json(teamData);
+  } catch (error) {
+    console.error('Error fetching team data:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 
 
 
