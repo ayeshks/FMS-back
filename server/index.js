@@ -28,6 +28,7 @@ const sessiondataRoutes = require('./routes/api/sessiondata');
 const mapRoutes = require('./routes/api/map');
 const iotRoutes = require('./routes/api/iot');
 const performanceRoutes = require('./routes/api/performance');
+const performancedataRoutes = require('./routes/api/performancedata');
 // const currentModulePath = path.dirname(__filename);
 
 // Serve static files from the "uploads" directory
@@ -49,6 +50,7 @@ app.use('/api/sessiondata', sessiondataRoutes);
 app.use('/api/map', mapRoutes);
 app.use('/api/iot', iotRoutes);
 app.use('/api/performance', performanceRoutes);
+app.use('/api/performancedata', performancedataRoutes);
 
 
 const port = process.env.PORT || 5000;

@@ -31,6 +31,8 @@ router.get('/', async (req, res) => {
         BPM: req.body.BPM,
         Distance: req.body.Distance,
         Sprints: req.body.Sprints,
+        iotId:req.body.iotId,
+        playerId:req.body.playerId,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -43,8 +45,6 @@ router.get('/', async (req, res) => {
     }
   });
   
-
-
 
   async function loadPerformanceCollection() {
     const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
