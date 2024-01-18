@@ -118,6 +118,28 @@ router.put('/:clubOwnerId', upload.single('clubavatar'), async (req, res) => {
   }
 });
 
+// Delete a club owner by ObjectId
+router.delete('/:objectId', async (req, res) => {
+  try {
+    const objectId = req.params.objectId;
+    console.log('Deleting club owner with objectId:', objectId);
+
+    const clubOwnersCollection = await loadClubOwnerCollection();
+
+    const result = await clubOwnersCollection.deleteOne({ _id: new ObjectId(objectId) });
+
+    if (result.deletedCount === 0) {
+      console.log('Club owner not found for objectId:', objectId);
+      return res.status(404).json({ success: false, message: 'Club owner not found' });
+    }
+
+    console.log('Club owner deleted successfully for objectId:', objectId);
+    res.json({ success: true, message: 'Club owner deleted successfully' });
+  } catch (error) {
+    console.error('Error during club owner deletion:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete club owner', error: error.message });
+  }
+});
 
 
 

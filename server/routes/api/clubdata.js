@@ -83,5 +83,22 @@ router.get('/', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to retrieve club data' });
   }
 });
+router.delete('/:ObjectId', async (req, res) => {
+  try {
+    const objectIdParam = req.params.ObjectId;
+    const clubCollection = await loadClubCollection();
 
+    const result = await clubCollection.deleteOne({ _id: new ObjectId(objectIdParam) });
+
+    if (result.deletedCount === 0) {
+      res.status(404).json({ message: 'Club not found for deletion' });
+      return;
+    }
+
+    res.json({ success: true, message: 'Club deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
 module.exports = router;

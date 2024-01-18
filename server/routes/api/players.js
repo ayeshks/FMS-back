@@ -179,6 +179,29 @@ router.put('/:ObjectId', upload.single('Pavatar'), async (req, res) => {
     }
 });
 
+// Delete a player by ObjectId
+router.delete('/:ObjectId', async (req, res) => {
+  try {
+    const objectIdToDelete = req.params.ObjectId;
+    console.log('Deleting player with ObjectId:', objectIdToDelete);
+
+    const playersCollection = await loadPlayersCollection();
+
+    const result = await playersCollection.deleteOne({ _id: new ObjectId(objectIdToDelete) });
+
+    if (result.deletedCount === 0) {
+      console.log('Player not found for ObjectId:', objectIdToDelete);
+      return res.status(404).json({ success: false, message: 'Player not found' });
+    }
+
+    console.log('Player deleted successfully for ObjectId:', objectIdToDelete);
+    res.json({ success: true, message: 'Player deleted successfully' });
+  } catch (error) {
+    console.error('Error during player deletion:', error);
+    res.status(500).json({ success: false, message: 'Failed to delete player', error: error.message });
+  }
+});
+
 
 
 async function loadPlayersCollection() {

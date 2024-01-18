@@ -125,6 +125,29 @@ router.put('/:objectId', upload.single('avatar'), async (req, res) => {
     }
 });
 
+// Delete a coach by ObjectId
+router.delete('/:objectId', async (req, res) => {
+    try {
+      const objectIdToDelete = req.params.objectId;
+      console.log('Deleting coach with ObjectId:', objectIdToDelete);
+  
+      const coachesCollection = await loadCoachesCollection();
+  
+      const result = await coachesCollection.deleteOne({ _id: new ObjectId(objectIdToDelete) });
+  
+      if (result.deletedCount === 0) {
+        console.log('Coach not found for ObjectId:', objectIdToDelete);
+        return res.status(404).json({ success: false, message: 'Coach not found' });
+      }
+  
+      console.log('Coach deleted successfully for ObjectId:', objectIdToDelete);
+      res.json({ success: true, message: 'Coach deleted successfully' });
+    } catch (error) {
+      console.error('Error during coach deletion:', error);
+      res.status(500).json({ success: false, message: 'Failed to delete coach', error: error.message });
+    }
+  });
+  
 async function loadCoachesCollection() {
   const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
