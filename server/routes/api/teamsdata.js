@@ -119,6 +119,26 @@ router.get('/:ObjectId', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+router.delete('/:ObjectId', async (req, res) => {
+  try {
+    const objectIdParam = req.params.ObjectId;
+    const teamsCollection = await loadTeamsCollection();
+
+    const result = await teamsCollection.deleteOne({ _id: new ObjectId(objectIdParam) });
+
+    if (result.deletedCount === 0) {
+      console.log(`Team with ID ${objectIdParam} not found for deletion`);
+      res.status(404).json({ message: 'Team not found for deletion' });
+      return;
+    }
+
+    console.log(`Team with ID ${objectIdParam} deleted successfully`);
+    res.json({ success: true, message: 'Team deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting team:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 
 
