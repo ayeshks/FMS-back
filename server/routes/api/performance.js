@@ -7,6 +7,24 @@ const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
 
+router.get('/:ObjectId', async (req, res) => {
+    try {
+        const objectIdParam = req.params.ObjectId;
+        const performanceCollection = await loadPerformanceCollection();
+        const performanceData = await performanceCollection.findOne({ _id: new ObjectId(objectIdParam) });
+
+        if (!performanceData) {
+            res.status(404).json({ message: 'Performance not found' });
+            return;
+        }
+
+        res.json(performanceData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 router.get('/', async (req, res) => {
     try {
       const performance = await loadPerformanceCollection();
@@ -44,6 +62,44 @@ router.get('/', async (req, res) => {
       res.status(500).send('Internal Server Error');
     }
   });
+
+  router.put('/:ObjectId', async (req, res) => {
+    try {
+        const objectIdToUpdate = req.params.ObjectId;
+        const performancesCollection = await loadPerformanceCollection();
+
+        const existingPerformance = await performancesCollection.findOne({ _id: new ObjectId(objectIdToUpdate) });
+
+        if (!existingPerformance) {
+            res.status(404).json({ message: 'Performance not found' });
+            return;
+        }
+
+        const updatedPerformance = {
+            BPM: req.body.BPM || existingPerformance.BPM,
+            Distance: req.body.Distance || existingPerformance.Distance,
+            Sprints: req.body.Sprints || existingPerformance.Sprints,
+            updatedAt: new Date(),
+        };
+
+        const result = await performancesCollection.updateOne(
+            { _id: new ObjectId(objectIdToUpdate) },
+            { $set: updatedPerformance }
+        );
+
+        console.log('Update Result:', result);
+
+        if (result.modifiedCount === 0) {
+            res.status(404).json({ message: 'Performance not found' });
+            return;
+        }
+
+        res.json({ message: 'Performance updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
   
 
   async function loadPerformanceCollection() {
