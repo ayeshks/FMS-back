@@ -106,10 +106,10 @@ router.get('/', async (req, res) => {
 
 
   async function loadIotCollection() {
-    const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
+    const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
         useNewUrlParser: true,
     });
-    return client.db('perfai-live').collection('iot');
+    return client.db('perfai-new').collection('iot');
 }
   
   module.exports = router;
