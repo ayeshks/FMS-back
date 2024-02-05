@@ -1,17 +1,17 @@
 const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 
-const mongoURL = 'mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority';
+const mongoURL = 'mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority';
 const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
 async function loadClubCollection() {
   const client = await MongoClient.connect(mongoURL, mongoOptions);
-  return client.db('perfai-new').collection('club');
+  return client.db('perfai-server').collection('club');
 }
 
 async function loadClubOwnerCollection() {
   const client = await MongoClient.connect(mongoURL, mongoOptions);
-  return client.db('perfai-new').collection('clubowner');
+  return client.db('perfai-server').collection('clubowner');
 }
 
 const router = express.Router();

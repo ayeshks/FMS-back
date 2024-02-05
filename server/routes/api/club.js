@@ -139,27 +139,27 @@ router.delete('/:objectId', async (req, res) => {
 
 // Function to load the MongoDB collection
 async function loadClubDataCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-new').collection('club');
+  return client.db('perfai-server').collection('club');
 }
 
 
 
 
 async function loadClubDataCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-new').collection('club');
+  return client.db('perfai-server').collection('club');
 }
 
 async function loadClubOwnersCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-new').collection('clubowner');
+  return client.db('perfai-server').collection('clubowner');
 }
 
 module.exports = router;
