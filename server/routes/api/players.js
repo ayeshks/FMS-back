@@ -47,6 +47,13 @@ let currentPlayerId = 10;
 
 router.post('/', upload.single('Pavatar'), async (req, res) => {
   try {
+    // Ensure required fields are present in the request
+    const requiredFields = ['PFname', 'PLname', 'PEmail', 'PNumber','PAge', 'PHeight', 'PWeight', 'PField', 'PJursey', 'DeviceType', 'SerialNumber'];
+    for (const field of requiredFields) {
+      if (!req.body[field]) {
+        return res.status(400).send(`Missing required field: ${field}`);
+      }
+    }
     const playersCollection = await loadPlayersCollection();
     const playerCount = await playersCollection.countDocuments();
     currentPlayerId = playerCount > 0 ? playerCount + 10 : 10;
@@ -205,10 +212,10 @@ router.delete('/:ObjectId', async (req, res) => {
 
 
 async function loadPlayersCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-new').collection('Players');
+  return client.db('perfai-live').collection('Players');
 }
 
 module.exports = router;

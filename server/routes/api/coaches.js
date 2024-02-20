@@ -190,11 +190,11 @@ router.delete('/:objectId', async (req, res) => {
     }
   });
   
-// async function loadCoachesCollection() {
-//   const client = await mongoclient.connect('mongodb+srv://chirathb:19970720a@perfai-server.2i1jrsj.mongodb.net/?retryWrites=true&w=majority', {
-//     useNewUrlParser: true,
-//   });
-//   return client.db('perfai-server2').collection('coaches');
-// }
+async function loadCoachesCollection() {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
+    useNewUrlParser: true,
+  });
+  return client.db('perfai-live').collection('coaches');
+}
 
 module.exports = router;
