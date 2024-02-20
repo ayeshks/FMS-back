@@ -2,7 +2,7 @@ const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path'); 
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+// const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const multer = require('multer'); 
 
 const router = express.Router();
@@ -15,13 +15,13 @@ const uri = 'mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retr
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Set up AWS S3 client
-const s3Client = new S3Client({
-  region: 'ap-south-1',
-  credentials: {
-    accessKeyId: 'AKIAYBYPZNYKJFFJJOV7',
-    secretAccessKey: '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',
-  },
-});
+// const s3Client = new S3Client({
+//   region: 'ap-south-1',
+//   credentials: {
+//     accessKeyId: 'AKIAYBYPZNYKJFFJJOV7',
+//     secretAccessKey: '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',
+//   },
+// });
 
 // Set up multer for file uploads
 const storage = multer.memoryStorage(); // Store files in memory to access buffer

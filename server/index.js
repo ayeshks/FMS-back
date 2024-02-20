@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+// const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 
 // Set up AWS S3 client
@@ -23,14 +23,14 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const s3Client = new S3Client({
-    region: 'ap-south-1',
-    credentials: {
-      accessKeyId: 'AKIAYBYPZNYKJFFJJOV7',
-      secretAccessKey: '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',
-    },
-  });
-  
+// const s3Client = new S3Client({
+//     region: 'ap-south-1',
+//     credentials: {
+//       accessKeyId: 'AKIAYBYPZNYKJFFJJOV7',
+//       secretAccessKey: '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',
+//     },
+//   });
+
   // Set up multer for file uploads
   const storage = multer.memoryStorage(); // Store files in memory to access buffer
   const upload = multer({ storage: storage });
