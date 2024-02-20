@@ -3,24 +3,24 @@ const { MongoClient, ObjectId } = require('mongodb');
 const router = express.Router();
 
 async function loadPerformanceCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-server').collection('Performance');
+  return client.db('perfai-live').collection('Performance');
 }
 
 async function loadIotCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-server').collection('iot');
+  return client.db('perfai-live').collection('iot');
 }
 
 async function loadPlayersCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-server').collection('Players');
+  return client.db('perfai-live').collection('Players');
 }
 
 router.get('/', async (req, res) => {

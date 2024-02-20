@@ -103,10 +103,10 @@ router.get('/', async (req, res) => {
   
 
   async function loadPerformanceCollection() {
-    const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
+    const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
         useNewUrlParser: true,
     });
-    return client.db('perfai-server').collection('Performance');
+    return client.db('perfai-live').collection('Performance');
 }
   
   module.exports = router;

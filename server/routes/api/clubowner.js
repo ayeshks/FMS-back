@@ -2,9 +2,35 @@ const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 const upload = require('../../../middleware/upload');
+const fs = require('fs');
 
 
 const router = express.Router();
+
+// Function to connect to AWS DocumentDB
+async function connectToDocumentDB() {
+  try {
+    const pemFilePath = '/Users/appleasia/Documents/perfai-server/perfai-server/global-bundle.pem'; // Adjusted path
+    const pemFileContent = fs.readFileSync(pemFilePath);
+
+    const client = await MongoClient.connect('mongodb://perfai:19970720a@docdb-2023-09-26-11-29-23.cluster-cs5od4y8mtq1.ap-south-1.docdb.amazonaws.com:27017/?tls=true&tlsCAFile=' + pemFilePath + '&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    
+    return client;
+  } catch (error) {
+    console.error('Error connecting to DocumentDB:', error);
+    throw error;
+  }
+}
+
+
+// Function to load the MongoDB collection for club owners
+async function loadClubOwnerCollection() {
+  const client = await connectToDocumentDB();
+  return client.db('perfai-new').collection('clubowner');
+}
 
 // Get a specific club owner by ObjectId
 router.get('/:ObjectId', async (req, res) => {
@@ -147,10 +173,10 @@ router.delete('/:objectId', async (req, res) => {
 
 
 async function loadClubOwnerCollection() {
-  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@perfai-server.wfxtufp.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-server').collection('clubowner');
+  return client.db('perfai-live').collection('clubowner');
 }
 
 

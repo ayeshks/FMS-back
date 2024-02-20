@@ -2,17 +2,38 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const multer = require('multer');
+
+// Set up AWS S3 client
+
+  
+
+  
 
 // const serverless = require ('serverless-http')
 // const AWS = require("aws-sdk")
 // const KEY_ID = "AKIAYBYPZNYKFUNXOON5"
 // const SECRET_KEY = "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"
 
+
 const app = express();
 
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+
+const s3Client = new S3Client({
+    region: 'ap-south-1',
+    credentials: {
+      accessKeyId: 'AKIAYBYPZNYKJFFJJOV7',
+      secretAccessKey: '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',
+    },
+  });
+  
+  // Set up multer for file uploads
+  const storage = multer.memoryStorage(); // Store files in memory to access buffer
+  const upload = multer({ storage: storage });
 
 // Importing routes
 const userRoutes = require('./routes/api/user');
