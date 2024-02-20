@@ -1,14 +1,61 @@
 const express = require('express');
 const { MongoClient, ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
-const upload = require('../../../middleware/upload');
-const path = require('path'); // Import the path module for file operations
+const path = require('path'); 
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const multer = require('multer'); 
 
 const router = express.Router();
+const upload = multer(); 
+
+// Connection URI
+const uri = 'mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority';
+
+// Create a new MongoClient
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Set up AWS S3 client
+const s3Client = new S3Client({
+  region: 'ap-south-1',
+  credentials: {
+    accessKeyId: 'AKIAYBYPZNYKJFFJJOV7',
+    secretAccessKey: '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',
+  },
+});
+
+// Set up multer for file uploads
+const storage = multer.memoryStorage(); // Store files in memory to access buffer
+const multerUpload = multer({ storage: storage }); // Rename 'upload' variable
+
+// Connect to MongoDB
+client.connect(err => {
+  if (err) {
+    console.error('Failed to connect to MongoDB:', err);
+    return;
+  }
+  console.log('Connected to MongoDB');
+});
+
+// Load map collection
+async function loadCoachesCollection() {
+  return client.db('perfai-new').collection('coaches');
+}
 
 router.get('/uploads/:filename', (req, res) => {
     const filename = req.params.filename;
     res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
+});
+
+// GET route to retrieve coaches data from MongoDB
+router.get('/', async (req, res) => {
+  try {
+    const coachesCollection = await loadCoachesCollection();
+    const coachesData = await coachesCollection.find({}).toArray();
+    res.json(coachesData);
+  } catch (error) {
+    console.error('Error retrieving coaches data from MongoDB:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 router.get('/:ObjectId', async (req, res) => {
@@ -29,55 +76,50 @@ router.get('/:ObjectId', async (req, res) => {
   }
 });
 
+router.post('/', multerUpload.single('avatar'), async (req, res) => { // Use 'multerUpload' instead of 'upload'
+  try {
+    // Ensure required fields are present in the request
+    const { coachFname, coachLname, coachEmail, coachPhone } = req.body;
+    const avatar = req.file;
 
-
-// Get coaches
-router.get('/', async (req, res) => {
-    try {
-        const coachesCollection = await loadCoachesCollection();
-        const coachesData = await coachesCollection.find({}).toArray();
-
-        res.send(coachesData);
-    } catch (error) {
-        console.error('GET /coaches Error:', error);
-        res.status(500).send('Internal Server Error');
+    if (!avatar) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
-});
 
-// Add Coach
-let currentCoachId = 10;
+    // Upload file to S3
+    const s3Params = {
+      Bucket: 'perfaienv', // Replace with your S3 bucket name
+      Key: new ObjectId().toString(), // Generate unique ObjectId
+      Body: avatar.buffer,
+      ContentType: avatar.mimetype,
+      ACL: 'public-read', 
+    };
 
-router.post('/', upload.single('avatar'), async (req, res) => {
-    try {
-        const coachesCollection = await loadCoachesCollection();
+    // Send the file to S3
+    const s3UploadResult = await s3Client.send(new PutObjectCommand(s3Params));
 
-        // Fetch the current count of coaches from the database
-        const coachCount = await coachesCollection.countDocuments();
-
-        // Increment the currentCoachId based on the count
-        currentCoachId = coachCount > 0 ? coachCount + 10 : 10;
-
-        // Create the new coach object with the incremented coach ID
-        const newCoach = {
-            coachId: currentCoachId,
-            coachFname: req.body.coachFname,
-            coachLname: req.body.coachLname,
-            coachEmail: req.body.coachEmail,
-            coachPhone: parseInt(req.body.coachPhone), // Convert to number
-            avatar: req.file ? req.file.filename : null, // Store the filename of the uploaded avatar
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-
-        const result = await coachesCollection.insertOne(newCoach);
-
-        res.status(201).send({ message: 'Coach added successfully', coachId: currentCoachId });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+    if (!s3UploadResult) {
+      throw new Error('Failed to upload file to S3');
     }
-});
 
+    // Insert data into MongoDB with S3 key reference
+    const coachesCollection = await loadCoachesCollection();
+    const result = await coachesCollection.insertOne({
+      coachFname,
+      coachLname,
+      coachEmail,
+      coachPhone: parseInt(coachPhone), // Convert to number
+      avatarId: s3Params.Key, // Store S3 key as avatarId
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    res.status(201).json({ message: 'Coach added successfully', coachId: result.insertedId });
+  } catch (error) {
+    console.error('Error uploading file to S3:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 // Update a coach
 router.put('/:objectId', upload.single('avatar'), async (req, res) => {
@@ -148,11 +190,11 @@ router.delete('/:objectId', async (req, res) => {
     }
   });
   
-async function loadCoachesCollection() {
-  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-  });
-  return client.db('perfai-live').collection('coaches');
-}
+// async function loadCoachesCollection() {
+//   const client = await mongoclient.connect('mongodb+srv://chirathb:19970720a@perfai-server.2i1jrsj.mongodb.net/?retryWrites=true&w=majority', {
+//     useNewUrlParser: true,
+//   });
+//   return client.db('perfai-server2').collection('coaches');
+// }
 
 module.exports = router;
