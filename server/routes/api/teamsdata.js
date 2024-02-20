@@ -2,22 +2,22 @@ const express = require('express');
 const { MongoClient } = require('mongodb');
 const { ObjectId } = require('mongodb');
 
-const mongoURL = 'mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority';
+const mongoURL = 'mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority';
 const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
 async function loadTeamsCollection() {
   const client = await MongoClient.connect(mongoURL, mongoOptions);
-  return client.db('perfai-live').collection('teams');
+  return client.db('perfai-new').collection('teams');
 }
 
 async function loadPlayersCollection() {
   const client = await MongoClient.connect(mongoURL, mongoOptions);
-  return client.db('perfai-live').collection('players');
+  return client.db('perfai-new').collection('players');
 }
 
 async function loadCoachesCollection() {
   const client = await MongoClient.connect(mongoURL, mongoOptions);
-  return client.db('perfai-live').collection('coaches');
+  return client.db('perfai-new').collection('coaches');
 }
 
 const router = express.Router();

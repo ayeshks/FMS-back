@@ -5,6 +5,7 @@ const upload = require('../../../middleware/upload');
 
 const router = express.Router();
 
+
 router.get('/uploads/:filename', (req, res) => {
   const filename = req.params.filename;
   res.sendFile(path.join(__dirname, 'uploads', filename)); // Adjust the path as needed
@@ -139,27 +140,27 @@ router.delete('/:objectId', async (req, res) => {
 
 // Function to load the MongoDB collection
 async function loadClubDataCollection() {
-  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-live').collection('club');
+  return client.db('perfai-new').collection('club');
 }
 
 
 
 
 async function loadClubDataCollection() {
-  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-live').collection('club');
+  return client.db('perfai-new').collection('club');
 }
 
 async function loadClubOwnersCollection() {
-  const client = await MongoClient.connect('mongodb+srv://ayeshs:19970720a@cluster11.xgxdyvp.mongodb.net/?retryWrites=true&w=majority', {
+  const client = await MongoClient.connect('mongodb+srv://chirathb:19970720a@cluster0.axxkews.mongodb.net/?retryWrites=true&w=majority', {
     useNewUrlParser: true,
   });
-  return client.db('perfai-live').collection('clubowner');
+  return client.db('perfai-new').collection('clubowner');
 }
 
 module.exports = router;
